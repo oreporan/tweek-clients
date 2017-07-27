@@ -103,6 +103,7 @@ export default class TweekRepository {
         this._store = store;
         return this._store.load().then(keys => {
             keys = keys || {};
+            this._cache = new Trie<RepositoryKey<any>>(TweekKeySplitJoin);
             Object.entries(keys).forEach(([key, value]) => this._cache.set(key, value));
         });
     }    
