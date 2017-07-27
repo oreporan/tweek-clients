@@ -1,6 +1,6 @@
 import Trie from './trie';
 import { ITweekClient, Context, FetchConfig } from '../tweek-client';
-import { partitionByIndex, snakeToCamelCase, distinct } from './utils';
+import { partitionByIndex, snakeToCamelCase, distinct, isScan } from './utils';
 import Optional from "./optional";
 
 require("object.entries").shim();
@@ -110,15 +110,13 @@ export default class TweekRepository {
 
     public prepare(key: string) {
         let node = this._cache.get(key);
-        let isScan = key.slice(-1) === "_";
-        if (!node) this._cache.set(key, { state: "requested", isScan });
+        if (!node) this._cache.set(key, { state: "requested", isScan: isScan(key) });
     }
 
     public get(key: string): Promise<never | Optional<any> | any> {
-        let isScan = key.slice(-1) === "_";
         let node = this._cache.get(key);
 
-        if (isScan && node) {
+        if (isScan(key) && node) {
             let prefix = getKeyPrefix(key);
 
             if (node.state === "requested" ||
@@ -184,8 +182,7 @@ export default class TweekRepository {
 
     private _updateTrieKeys(keys, config) {
         keys.forEach(keyToUpdate => {
-            const isScan = keyToUpdate.slice(-1) === "_";
-            if (!isScan) {
+            if (!isScan(keyToUpdate)) {
                 this.updateNode(keyToUpdate, this._cache.get(keyToUpdate), config[keyToUpdate]);
                 return;
             }

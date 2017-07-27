@@ -20,3 +20,7 @@ export function snakeToCamelCase(keyName){
     let [[first], others] = partitionByIndex(keyName.split("_"), 1);
     return [first, ...others.map(captialize)].join("");
 }
+
+export function isScan(keyName: string): boolean {
+    return keyName === '_' || keyName.endsWith('/_');
+}
