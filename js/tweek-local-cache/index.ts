@@ -164,7 +164,7 @@ export default class TweekRepository {
 
         let entries = Object.entries(this._cache.list(prefix));
         entries.forEach(([subKey, valueNode]) => {
-            this.updateNode(subKey, valueNode, config[subKey]);
+            this.updateNode(subKey, config[subKey]);
             if (valueNode.state === "missing" || !valueNode.isScan) {
                 return;
             }
@@ -183,7 +183,7 @@ export default class TweekRepository {
     private _updateTrieKeys(keys, config) {
         keys.forEach(keyToUpdate => {
             if (!isScan(keyToUpdate)) {
-                this.updateNode(keyToUpdate, this._cache.get(keyToUpdate), config[keyToUpdate]);
+                this.updateNode(keyToUpdate, config[keyToUpdate]);
                 return;
             }
 
@@ -214,7 +214,7 @@ export default class TweekRepository {
             .forEach(key => this._cache.set(key, { state: state, isScan: true }));
     }
 
-    private updateNode(key, node, value) {
+    private updateNode(key, value) {
         if (value === undefined) {
             this._cache.set(key, { state: "missing" });
         } else {
